@@ -1,0 +1,7 @@
+require("options")
+require("gui")
+require("myFuncs")
+require("keymaps")
+require("autocommands")
+require("lazy-boot")
+require("colorscheme")
