@@ -101,9 +101,10 @@ return {
         -- sources for autocompletion
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
-          -- { name = "luasnip" }, -- snippets
+          { name = "snippets" }, -- snippets
           { name = "path" }, -- file system paths
-          { name = "orgmode" },
+          { name = "codeium" },
+          -- { name = "orgmode" },
         }, {
           { name = "buffer" }, -- text within current buffer
         }),
@@ -114,6 +115,7 @@ return {
             mode = "symbol",
             maxwidth = 50,
             ellipsis_char = "...",
+            symbol_map = { Codeium = "_" },
           }),
         },
       })

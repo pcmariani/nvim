@@ -1,0 +1,109 @@
+{
+  "println": { "prefix": ["p", "println"], "body": ["println $0"] },
+  "print": { "prefix": ["pr", "print"], "body": ["print $0"] },
+  "function prettyJson": {
+    "body": "private String prettyJson(def thing) { return JsonOutput.prettyPrint(JsonOutput.toJson(thing)) }",
+    "prefix": "function prettyJson"
+  },
+  "println prettyJson": {
+    "prefix": ["pj", "println prettyJson"],
+    "body": ["println prettyJson($1)$0"]
+  },
+
+  "ExecutionUtil.setDynamicProcessProperty": {
+    "prefix": "ExecutionUtil.setDynamicProcessProperty",
+    "body": [
+      "ExecutionUtil.setDynamicProcessProperty(\"DPP_${1:prop}\", ${2:var}, false)$0"
+    ]
+  },
+
+  "ExecutionUtil.getDynamicProcessProperty": {
+    "prefix": "ExecutionUtil.getDynamicProcessProperty",
+    "body": ["def $1 = ExecutionUtil.getDynamicProcessProperty(\"$2\")", "$0"]
+  },
+  "ExecutionUtil.getDynamicProcessProperty String": {
+    "prefix": "ExecutionUtil.getDynamicProcessProperty String",
+    "body": [
+      "String ${1:var} = ExecutionUtil.getDynamicProcessProperty(\"DPP_${2:prop}\") ?: \"${3:default}\"",
+      "$0"
+    ]
+  },
+  "ExecutionUtil.getDynamicProcessProperty int": {
+    "prefix": "ExecutionUtil.getDynamicProcessProperty int",
+    "body": [
+      "int ${1:var} = (ExecutionUtil.getDynamicProcessProperty(\"DPP_${2:prop}\") ?: \"${3:1}\") as int",
+      "$0"
+    ]
+  },
+  "ExecutionUtil.getDynamicProcessProperty Boolean": {
+    "prefix": "ExecutionUtil.getDynamicProcessProperty Boolean",
+    "body": [
+      "Boolean ${1:var} = (ExecutionUtil.getDynamicProcessProperty(\"DPP_${2:prop}\") ?: \"${3:true}\").toBoolean()",
+      "$0"
+    ]
+  },
+
+  "setProperty(\"document.dynamic.userdefined\")": {
+    "prefix": "setProperty(\"document.dynamic.userdefined\")",
+    "body": [
+      "props.setProperty(\"document.dynamic.userdefined.dpp_${1:prop}\", ${2:var})$0"
+    ]
+  },
+
+  "getProperty(\"document.dynamic.userdefined\")": {
+    "prefix": "getProperty(\"document.dynamic.userdefined\")",
+    "body": [
+      "def ${1:var} = props.getProperty(\"document.dynamic.userdefined.dpp_${2:prop}\")",
+      "$0"
+    ]
+  },
+  "getProperty(\"document.dynamic.userdefined\") String": {
+    "prefix": "getProperty(\"document.dynamic.userdefined\") String",
+    "body": [
+      "String ${1:var} = props.getProperty(\"document.dynamic.userdefined.dpp_${2:prop}\") ?: \"${3:default}\"",
+      "$0"
+    ]
+  },
+  "getProperty(\"document.dynamic.userdefined\") int": {
+    "prefix": "getProperty(\"document.dynamic.userdefined\") int",
+    "body": [
+      "int ${1:var} = (props.getProperty(\"document.dynamic.userdefined.dpp_${2:prop}\") ?: \"${3:1}\") as int",
+      "$0"
+    ]
+  },
+  "getProperty(\"document.dynamic.userdefined\") Boolean": {
+    "prefix": "getProperty(\"document.dynamic.userdefined\") Boolean",
+    "body": [
+      "Boolean ${1:var} = (props.getProperty(\"document.dynamic.userdefined.dpp_${2:prop}\") ?: \"${3:true}\").toBoolean()",
+      "$0"
+    ]
+  },
+
+  "function niceTable": {
+    "prefix": "function niceTable",
+    "body": [
+      "private String niceTableForDebugging(int index, String delimiter, ArrayList widthsArr, ArrayList headersArr, ArrayList valuesArr) {",
+      "  StringBuilder outStr = new StringBuilder()",
+      "  def processArray = { ArrayList arr ->",
+      "    def lineArr = [\"\"]*arr.size()",
+      "    arr.eachWithIndex{ val, i ->",
+      "      int padSize = widthsArr[i] - val.toString().size()",
+      "      if (val instanceof Integer) {",
+      "        lineArr[i] = (\" \"*(padSize > 0 ? padSize : 0)) + val.toString()",
+      "      } else {",
+      "        lineArr[i] = val + (\" \"*(padSize > 0 ? padSize : 0))",
+      "      }",
+      "    }",
+      "    return lineArr",
+      "  }",
+      "  if (index == 0) {",
+      "    outStr.append(processArray(headersArr).join(\" \"*delimiter.size()) + System.lineSeparator())",
+      "    outStr.append(processArray(headersArr.collect{ \"-\"*it.size() }).join(delimiter) + System.lineSeparator())",
+      "  }",
+      "  outStr.append(processArray(valuesArr).join(delimiter))",
+      "  return outStr.toString()",
+      "}",
+      "$0"
+    ]
+  }
+}

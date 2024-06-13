@@ -38,48 +38,48 @@ end
 --   -- end
 -- end
 
-M.fzf_pick_workspace = function(opts)
-  local fzf = require("fzf-lua")
-  local wss = require("workspaces")
+-- M.fzf_pick_workspace = function(opts)
+--   local fzf = require("fzf-lua")
+--   local wss = require("workspaces")
+--
+--   opts = opts or {}
+--   opts.prompt = "Workspaces> "
+--   opts.winopts = {
+--     height = 0.33,
+--     width = 0.33,
+--   }
+--   opts.actions = {
+--     ["default"] = function(selected)
+--       vim.cmd("WorkspacesOpen " .. string.gsub(selected[1], "%s.+", ""))
+--     end,
+--   }
+--   local items = {}
+--   for _, workspace in ipairs(wss.get()) do
+--     table.insert(items, workspace.name .. "\t" .. workspace.path)
+--   end
+--   fzf.fzf_exec(items, opts)
+-- end
 
-  opts = opts or {}
-  opts.prompt = "Workspaces> "
-  opts.winopts = {
-    height = 0.33,
-    width = 0.33,
-  }
-  opts.actions = {
-    ["default"] = function(selected)
-      vim.cmd("WorkspacesOpen " .. string.gsub(selected[1], "%s.+", ""))
-    end,
-  }
-  local items = {}
-  for _, workspace in ipairs(wss.get()) do
-    table.insert(items, workspace.name .. "\t" .. workspace.path)
-  end
-  fzf.fzf_exec(items, opts)
-end
-
-M.fzf_pick_commands = function(opts)
-  local fzf = require("fzf-lua")
-
-  opts = opts or {}
-  opts.prompt = "Command> "
-  opts.winopts = {
-    height = 0.33,
-    width = 0.33,
-  }
-  opts.actions = {
-    ["default"] = function(selected)
-      vim.cmd("WorkspacesOpen " .. string.gsub(selected[1], "%s.+", ""))
-    end,
-  }
-  local items = {}
-  for _, workspace in ipairs(wss.get()) do
-    table.insert(items, workspace.name .. "\t" .. workspace.path)
-  end
-  fzf.fzf_exec(items, opts)
-end
+-- M.fzf_pick_commands = function(opts)
+--   local fzf = require("fzf-lua")
+--
+--   opts = opts or {}
+--   opts.prompt = "Command> "
+--   opts.winopts = {
+--     height = 0.33,
+--     width = 0.33,
+--   }
+--   opts.actions = {
+--     ["default"] = function(selected)
+--       vim.cmd("WorkspacesOpen " .. string.gsub(selected[1], "%s.+", ""))
+--     end,
+--   }
+--   local items = {}
+--   for _, workspace in ipairs(wss.get()) do
+--     table.insert(items, workspace.name .. "\t" .. workspace.path)
+--   end
+--   fzf.fzf_exec(items, opts)
+-- end
 
 M.toggleMaximize = function()
   -- Retrieve global variables or default values
@@ -128,15 +128,18 @@ M.normal_esc_actions = function()
     vim.cmd("nohlsearch")
     return
   end
+
   -- Iterate through all windows
   for i = 1, vim.fn.winnr("$") do
     local bnum = vim.fn.winbufnr(i)
-    -- Uncomment this block if you want to close help buffers
     -- if vim.fn.getbufvar(bnum, '&buftype') == 'help' then
     --   vim.cmd('bdelete ' .. bnum)
     --   return
     -- end
-    if vim.fn.getbufvar(bnum, "&buftype") == "quickfix" then
+    if vim.fn.getbufvar(bnum, "&filetype") == "NvimTree" then
+      vim.cmd("NvimTreeClose")
+      return
+    elseif vim.fn.getbufvar(bnum, "&buftype") == "quickfix" then
       vim.cmd("cclose")
       return
     end

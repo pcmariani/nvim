@@ -1,5 +1,15 @@
 vim.g.mapleader = " "
 
+vim.keymap.set("n", "]]", function()
+  local t = require("nvim-treesitter.ts_utils")
+  t.goto_node(t.get_next_node(t.get_node_at_cursor(), true, true), false, true)
+end)
+
+vim.keymap.set("n", "[[", function()
+  local t = require("nvim-treesitter.ts_utils")
+  t.goto_node(t.get_previous_node(t.get_node_at_cursor(), true, true), false, true)
+end)
+
 -- easy to command mode
 vim.keymap.set({ "n", "x" }, ";", ":", { desc = "Enter Command" })
 vim.keymap.set({ "n", "x" }, ":", ";", { desc = "Repeat Search" })
@@ -12,6 +22,11 @@ vim.keymap.set("i", "<C-h>", "<C-o><C-w><C-h>", { desc = "Move to left window" }
 vim.keymap.set("i", "<C-l>", "<C-o><C-w><C-l>", { desc = "Move to right window" })
 vim.keymap.set("i", "<C-j>", "<C-o><C-w><C-j>", { desc = "Move to lower window" })
 vim.keymap.set("i", "<C-k>", "<C-o><C-w><C-k>", { desc = "Move to upper window" })
+
+vim.keymap.set("n", "<C-w>h", "15<C-w><", { desc = "Resize window left" })
+vim.keymap.set("n", "<C-w>l", "15<C-w>>", { desc = "Resize window right" })
+vim.keymap.set("n", "<C-w>j", "10<C-w>-", { desc = "Resize window down" })
+vim.keymap.set("n", "<C-w>k", "10<C-w>+", { desc = "Resize window up" })
 
 -- Terminal
 vim.keymap.set("n", "<leader>ot", "<Cmd>ToggleTerm<CR>", { silent = true, desc = "Open Terminal" })
@@ -26,7 +41,8 @@ vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { desc = "Terminal Motion" })
 if jit.os == "Windows" then
   vim.keymap.set("n", "<leader>v", ':w<cr>:TermExec cmd="r"<cr>', { desc = "Repeat Terminal Command (r)" })
 else
-  vim.keymap.set("n", "<leader>v", ":w<cr>:TermExec cmd='!!'<cr>:TermExec cmd=''<cr>", { desc = "Repeat Terminal Command (!!)" })
+  vim.keymap.set("n", "<leader>v", ":w<cr>:TermExec cmd='!!'<cr>:TermExec cmd=''<cr>",
+    { desc = "Repeat Terminal Command (!!)" })
 end
 
 -- Cycle visual > visual block mode
@@ -96,12 +112,16 @@ vim.keymap.set("v", "<", "<gv", { silent = true })
 vim.keymap.set("v", ">", ">gv", { silent = true })
 
 -- QuickFix list
-vim.keymap.set("n", "<C-q>", ':lua require("myFuncs").search_to_qf()<CR>', { silent = true, desc = "Send current search to qf" })
+vim.keymap.set("n", "<C-q>", ':lua require("myFuncs").search_to_qf()<CR>',
+  { silent = true, desc = "Send current search to qf" })
 vim.keymap.set("n", "<leader>cc", ':lua require("myFuncs").toggle_qf()<CR>', { silent = true, desc = "Quickfix" })
 vim.keymap.set("n", "<leader>oq", "<Cmd>copen<CR>", { silent = true, desc = "Open Quickfix" })
-vim.keymap.set("n", "<C-p>", [[empty(filter(getwininfo(), 'v:val.quickfix')) ? "<C-p>" : ":cprevious<CR>"]], { silent = true, expr = true, desc = "cprevious" })
-vim.keymap.set("n", "<C-n>", [[empty(filter(getwininfo(), 'v:val.quickfix')) ? "<C-n>" : ":cnext<CR>"]], { silent = true, expr = true, desc = "cnext" })
-vim.keymap.set("n", "<CR>", [[&buftype ==# 'quickfix' ? "\<CR>" : ':silent! norm!za<CR>']], { silent = true, expr = true, desc = "goto qf item" })
+vim.keymap.set("n", "<C-p>", [[empty(filter(getwininfo(), 'v:val.quickfix')) ? "<C-i>" : ":cprevious<CR>"]],
+  { silent = true, expr = true, desc = "cprevious" })
+vim.keymap.set("n", "<C-n>", [[empty(filter(getwininfo(), 'v:val.quickfix')) ? "<C-n>" : ":cnext<CR>"]],
+  { silent = true, expr = true, desc = "cnext" })
+vim.keymap.set("n", "<CR>", [[&buftype ==# 'quickfix' ? "\<CR>" : ':silent! norm!za<CR>']],
+  { silent = true, expr = true, desc = "goto qf item" })
 vim.keymap.set("n", "<C-o>", [[&buftype ==# 'quickfix' ? ":echo 'o'<CR>" : "<C-o>"]], { silent = true, expr = true })
 vim.keymap.set("n", "<C-i>", [[&buftype ==# 'quickfix' ? ":echo 'i'<CR>" : "<C-i>"]], { silent = true, expr = true })
 
@@ -121,7 +141,8 @@ vim.keymap.set("n", "<C-i>", [[&buftype ==# 'quickfix' ? ":echo 'i'<CR>" : "<C-i
 -- vim.keymap.set('n','<leader>/', [[/\V<C-r>=expand("<cword>")<CR><CR>]], { silent = true })
 -- global search for word under cursor and send to quickfix
 -- vim.keymap.set('n','<leader><leader>/', [[/\V<C-r>=expand("<cword>")<CR><CR>:silent exe "grep "substitute(@/,'^\\V','','')<CR>]], { silent = true })
-vim.keymap.set("n", "<leader>/", '/\\V<C-r>=expand("<cword>")<CR><CR>:lua require("myFuncs").search_to_qf()<CR>', { silent = true })
+vim.keymap.set("n", "<leader>/", '/\\V<C-r>=expand("<cword>")<CR><CR>:lua require("myFuncs").search_to_qf()<CR>',
+  { silent = true })
 -- -- global search for functions
 -- vim.keymap.set('n','<leader>sf', [[/<CR>:silent exe "grep "substitute(@/,'^\\V','','')<CR>]], { silent = true })
 
@@ -175,7 +196,8 @@ vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Toggles
-vim.keymap.set("n", "<leader>tb", '<Cmd>lua vim.o.bg = vim.o.bg == "dark" and "light" or "dark"<CR>', { silent = true, desc = "Background" })
+vim.keymap.set("n", "<leader>tb", '<Cmd>lua vim.o.bg = vim.o.bg == "dark" and "light" or "dark"<CR>',
+  { silent = true, desc = "Background" })
 vim.keymap.set("n", "<leader>tn", "<Cmd>setlocal number!<CR>", { silent = true, desc = "Line Numbers" })
 vim.keymap.set("n", "<leader>tl", "<Cmd>setlocal number!<CR>", { silent = true, desc = "Line Numbers" })
 -- vim.keymap.set('n', '<leader>tN', '<Cmd>set number!<CR>', { silent = true, desc = "Line Numbers (global)" })
@@ -190,7 +212,8 @@ vim.keymap.set(
   { expr = true, silent = true, desc = "Signcolumn" }
 )
 -- vim.keymap.set('n', '<leader>tC', [[&signcolumn == 'yes' ? 'mR:windo set signcolumn=no<CR>`R' : 'mR:windo set signcolumn=yes<CR>`R']], { expr = true, silent = true, desc = "Signcolumn" })
-vim.keymap.set("n", "<leader>tm", '<Cmd>lua require("myFuncs").toggleMaximize()<CR>', { silent = true, desc = "Maximize" })
+vim.keymap.set("n", "<leader>tm", '<Cmd>lua require("myFuncs").toggleMaximize()<CR>',
+  { silent = true, desc = "Maximize" })
 
 -- Copy/paste
 vim.keymap.set({ "x" }, "p", "P", { desc = "Paste without yanking" })
@@ -215,7 +238,8 @@ vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true }
 vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 
 -- Reselect latest changed, put, or yanked text
-vim.keymap.set("n", "gV", '"`[" . strpart(getregtype(), 0, 1) . "`]"', { expr = true, replace_keycodes = false, desc = "Visually select changed text" })
+vim.keymap.set("n", "gV", '"`[" . strpart(getregtype(), 0, 1) . "`]"',
+  { expr = true, replace_keycodes = false, desc = "Visually select changed text" })
 
 -- Search inside visually highlighted text. Use `silent = false` for it to
 -- make effect immediately.

@@ -71,6 +71,21 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- vim.api.nvim_create_autocmd("FileType", {
 --   group = vim.api.nvim_create_augroup("filetypes", { clear = true }),
+--   desc = "laststatus = 0",
+--   pattern = { "whichkey" },
+--   callback = function()
+--     vim.cmd("set laststatus=0")
+--     vim.api.nvim_create_autocmd("BufLeave", {
+--       buffer = 0,
+--       callback = function()
+--         vim.cmd("set laststatus=2")
+--       end,
+--     })
+--   end,
+-- })
+
+-- vim.api.nvim_create_autocmd("FileType", {
+--   group = vim.api.nvim_create_augroup("filetypes", { clear = true }),
 --   pattern = "fzf",
 --   callback = function()
 --     local zindex = vim.api.nvim_win_get_config(vim.api.nvim_get_current_win()).zindex

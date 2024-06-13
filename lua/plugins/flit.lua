@@ -1,6 +1,6 @@
 return {
   "ggandor/flit.nvim",
-  dependancies = {
+  dependencies = {
     "ggandor/leap.nvim",
   },
   config = function()

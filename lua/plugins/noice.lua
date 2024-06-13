@@ -22,11 +22,11 @@ return {
     views = {
       cmdline_popup = {
         border = {
-        --   style = "none",
-        --   -- padding = { 2, 3 },
-          text = {
-            top = " asdf ",
-          },
+          --   style = "none",
+          --   -- padding = { 2, 3 },
+          -- text = {
+          --   top = " asdf ",
+          -- },
         },
         position = {
           row = "79%",
@@ -35,6 +35,19 @@ return {
         },
         size = {
           width = 109,
+          -- width = function()
+          --   if vim.o.columns < 120 then
+          --     return 90
+          --   elseif vim.o.columns < 160 then
+          --     return 100
+          --   elseif vim.o.columns < 200 then
+          --     return 120
+          --   elseif vim.o.columns < 250 then
+          --     return 150
+          --   else
+          --     return 200
+          --   end
+          -- end,
           height = "auto",
         },
         -- win_options = {
@@ -67,8 +80,8 @@ return {
       -- view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
       opts = {
         border = {
-        --   style = "none",
-        --   -- padding = { 2, 3 },
+          --   style = "none",
+          --   -- padding = { 2, 3 },
           text = {
             top = "",
           },
@@ -101,7 +114,7 @@ return {
       enabled = true,
     },
     signature = {
-      enabled = true
+      enabled = true,
     },
   },
 }

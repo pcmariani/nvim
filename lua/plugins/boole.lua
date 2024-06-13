@@ -8,8 +8,9 @@ return {
       },
       -- User defined loops
       additions = {
-        { "Foo", "Bar" },
-        { "tic", "tac", "toe" },
+        { "Foo",       "Bar" },
+        { "tic",       "tac",       "toe" },
+        { "ascending", "descending" },
       },
       allow_caps_additions = {
         { "enable", "disable" },

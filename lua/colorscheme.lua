@@ -19,9 +19,9 @@ vim.cmd([[
 
 -- Colors are applied automatically based on user-defined highlight groups.
 -- There is no default value.
-vim.cmd.highlight("IndentLine guifg=#282828")
+-- vim.cmd.highlight("IndentLine guifg=#282828")
 -- Current indent line highlight
-vim.cmd.highlight("IndentLineCurrent guifg=#383838")
+-- vim.cmd.highlight("IndentLineCurrent guifg=#383838")
 --
 -- local colors = require("catppuccin.palettes").get_palette()
 -- local black = "#090909"

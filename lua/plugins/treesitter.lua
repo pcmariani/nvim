@@ -2,8 +2,34 @@ return {
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    lazy = false,
     opts = {
-      ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "org", "vim", "vimdoc", "json", "javascript", "groovy" },
+      ensure_installed = {
+        "regex",
+        "bash",
+        "c",
+        "diff",
+        "html",
+        "lua",
+        "luadoc",
+        "luap",
+        "markdown",
+        "markdown_inline",
+        "printf",
+        "query",
+        "toml",
+        "yaml",
+        "xml",
+        "org",
+        "vim",
+        "vimdoc",
+        "json",
+        "jsonc",
+        "javascript",
+        "tsx",
+        "typescript",
+        "groovy",
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -15,9 +41,30 @@ return {
           "ruby",
         },
       },
-      indent = { enable = true, disable = {
-        "ruby",
-      } },
+      indent = {
+        enable = true,
+        disable = {
+          "ruby",
+        },
+      },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "<C-space>",
+          node_incremental = "<C-space>",
+          scope_incremental = false,
+          node_decremental = "<bs>",
+        },
+      },
+      textobjects = {
+        move = {
+          enable = true,
+          goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer" },
+          goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer" },
+          goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer" },
+          goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer" },
+        },
+      },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -34,5 +81,11 @@ return {
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
+  },
+  -- Automatically add closing tags for HTML and JSX
+  {
+    "windwp/nvim-ts-autotag",
+    ft = { "html", "xml", "jsx", "tsx" },
+    opts = {},
   },
 }
