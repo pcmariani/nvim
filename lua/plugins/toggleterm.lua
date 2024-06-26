@@ -1,8 +1,8 @@
 return {
-  'akinsho/toggleterm.nvim', 
+  "akinsho/toggleterm.nvim",
   version = "*",
   opts = {
-    direction = 'vertical',
+    direction = "vertical",
     size = function(term)
       if term.direction == "horizontal" then
         return 15
@@ -12,9 +12,8 @@ return {
     end,
     start_in_insert = true,
     insert_mappings = true, -- whether or not the open mapping applies in insert mode
-    terminal_mappings = true, 
+    terminal_mappings = true,
     autochdir = true,
-    close_on_exit = true, -- close the terminal window when the process exits
+    close_on_exit = false, -- close the terminal window when the process exits
   },
 }
-

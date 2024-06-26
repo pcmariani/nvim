@@ -56,13 +56,14 @@ return {
     lualine.setup({
       options = {
         icons_enabled = false,
-        theme = function()
-          if vim.o.background == "dark" then
-            return my_lualine_theme
-          else
-            return "auto"
-          end
-        end,
+        -- theme = "tundra",
+        -- theme = function()
+        --   if vim.o.background == "dark" then
+        --     return my_lualine_theme
+        --   else
+        --     return {}
+        --   end
+        -- end,
         -- component_separators = { left = '', right = ''},
         -- section_separators = { left = '', right = ''},
         -- component_separators = { left = ' ', right = ' '},

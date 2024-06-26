@@ -4,12 +4,13 @@ return {
   main = "ibl",
   opts = {
     indent = {
-      char = "┊",
+      -- char = "┊",
+      char = "│",
       tab_char = "│",
     },
     scope = {
       show_start = false,
-      show_end = false
+      show_end = false,
     },
     exclude = {
       filetypes = {

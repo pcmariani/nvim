@@ -21,26 +21,29 @@ return {
         sidebars = transparent and "transparent" or "dark",
         floats = transparent and "transparent" or "dark",
       },
-      on_colors = function(colors)
-        colors.bg = bg
-        colors.bg_dark = transparent and colors.none or bg_dark
-        colors.bg_float = transparent and colors.none or bg_dark
-        colors.bg_highlight = bg_highlight
-        colors.bg_popup = bg_dark
-        colors.bg_search = bg_search
-        colors.bg_sidebar = transparent and colors.none or bg_dark
-        colors.bg_statusline = transparent and colors.none or bg_dark
-        colors.bg_visual = bg_visual
-        colors.border = border
-        colors.fg = fg
-        colors.fg_dark = fg_dark
-        colors.fg_float = fg
-        colors.fg_gutter = fg_gutter
-        colors.fg_sidebar = fg_dark
-      end,
+      hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
+      dim_inactive = false, -- dims inactive windows
+      lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+      -- on_colors = function(colors)
+      --   colors.bg = bg
+      --   colors.bg_dark = transparent and colors.none or bg_dark
+      --   colors.bg_float = transparent and colors.none or bg_dark
+      --   colors.bg_highlight = bg_highlight
+      --   colors.bg_popup = bg_dark
+      --   colors.bg_search = bg_search
+      --   colors.bg_sidebar = transparent and colors.none or bg_dark
+      --   colors.bg_statusline = transparent and colors.none or bg_dark
+      --   colors.bg_visual = bg_visual
+      --   colors.border = border
+      --   colors.fg = fg
+      --   colors.fg_dark = fg_dark
+      --   colors.fg_float = fg
+      --   colors.fg_gutter = fg_gutter
+      --   colors.fg_sidebar = fg_dark
+      -- end,
     })
 
-    -- vim.cmd("colorscheme tokyonight")
+    vim.cmd("colorscheme tokyonight")
   end,
 }
 

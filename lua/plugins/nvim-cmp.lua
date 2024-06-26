@@ -137,6 +137,9 @@ return {
             c = cmp.mapping.select_prev_item(),
             i = cmp.mapping.select_prev_item(),
           },
+          -- ["<Space>"] = {
+          --   c = cmp.mapping.confirm({ select = true }),
+          -- },
         }),
       })
 

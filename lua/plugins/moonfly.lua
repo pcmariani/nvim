@@ -4,7 +4,7 @@ return {
   lazy = false,
   priority = 1000,
   config = function()
-  -- init = function()
+    -- init = function()
     vim.g.moonflyCursorColor = true
     vim.cmd([[
       hi CursorLine guibg=#171717
@@ -14,5 +14,6 @@ return {
     -- vim.opt.fillchars = { horiz = '━', horizup = '┻', horizdown = '┳', vert = '┃', vertleft = '┫', vertright = '┣', verthoriz = '╋', }
     -- vim.g.moonflyNormalFloat = true
     -- vim.cmd([[let g:lightline = { 'colorscheme': 'moonfly' }]])
+    vim.cmd([[colorscheme moonfly]])
   end,
 }

@@ -66,7 +66,7 @@ vim.api.nvim_create_autocmd("FileType", {
   group = vim.api.nvim_create_augroup("filetypes", { clear = true }),
   desc = "Don't show linenunmbers",
   pattern = { "yaml", "yml" },
-  command = "set nonumber | set norelativenumber",
+  command = "set nonumber | set norelativenumber | set signcolumn=no",
 })
 
 -- vim.api.nvim_create_autocmd("FileType", {
@@ -124,7 +124,7 @@ augroup END
 augroup terminal
   au!
   " au BufWinEnter,WinEnter term://* startinsert
-  au BufWinEnter,WinEnter * if &l:buftype ==# 'terminal' | call SpecialWindowMaps() | endif
+  au BufWinEnter,WinEnter * if &l:buftype ==# 'terminal' | call SpecialWindowMaps() | set signcolumn=no | endif
 augroup END
 
 augroup qf

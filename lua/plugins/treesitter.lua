@@ -45,6 +45,7 @@ return {
         enable = true,
         disable = {
           "ruby",
+          "groovy",
         },
       },
       incremental_selection = {

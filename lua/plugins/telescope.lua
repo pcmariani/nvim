@@ -131,11 +131,11 @@ return {
           path_display = { "smart" },
           mappings = {
             i = {
-              -- ["<esc>"] = require('telescope.actions').close,
+              -- ["<esc>"] = require("telescope.actions").close,
               ["<C-enter>"] = "to_fuzzy_refine",
-              -- ['<C-q>']     = require('telescope.actions').send_selected_to_qflist, -- + custom_actions.open_trouble_qflist,
-              ["<C-q>"] = require("telescope.actions").send_to_qflist,
-              ["<C-d>"] = require("telescope.actions").delete_buffer,
+              ["<C-q>s"] = require("telescope.actions").send_selected_to_qflist, -- + custom_actions.open_trouble_qflist,
+              ["<C-q>a"] = require("telescope.actions").send_to_qflist,
+              -- ["<C-d>"] = require("telescope.actions").delete_buffer,
               ["<C-j>"] = require("telescope.actions").preview_scrolling_down,
               ["<C-k>"] = require("telescope.actions").preview_scrolling_up,
               ["<C-t>"] = require("telescope.actions.layout").toggle_prompt_position,
@@ -161,6 +161,11 @@ return {
               "--glob=!**/dist/*",
               "--glob=!**/yarn.lock",
               "--glob=!**/package-lock.json",
+            },
+            mappings = {
+              i = {
+                ["<C-h>"] = "delete_buffer",
+              },
             },
           },
         },
@@ -196,7 +201,13 @@ return {
       vim.keymap.set("n", "<leader>s/", function() builtin.search_history() end, { desc = "Search History" })
 
       -- vim.keymap.set("n", "<leader><leader>", function() builtin.find_files(dropdown) end, { desc = "Files" })
-      vim.keymap.set("n", "<leader>ff", function() builtin.find_files() end, { desc = "Find Files" })
+      vim.keymap.set("n", "<leader>ff", function() builtin.find_files({
+        attach_mappings = function(_, map)
+          map("i", "<C-f>", print_selected_entry)
+          map("n", "<C-f>", print_selected_entry)
+          return true
+        end,
+      }) end, { desc = "Find Files" })
       vim.keymap.set("n", "<leader>fr", function() builtin.oldfiles() end, { desc = 'Find Recent Files' })
       vim.keymap.set("n", "<leader>fc", function() builtin.find_files({ cwd = vim.fn.stdpath("config") }) end,
         { desc = "Find Config Files" })
