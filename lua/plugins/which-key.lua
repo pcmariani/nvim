@@ -1,41 +1,64 @@
 return {
   "folke/which-key.nvim",
   event = "VeryLazy",
-  init = function()
-    vim.o.timeout = true
-    vim.o.timeoutlen = 500
-    local wk = require("which-key")
-    wk.register({
-      ["<leader>"] = {
-        b = { name = "+buffer" },
-        c = { name = "+code" },
-        f = { name = "+find" },
-        o = { name = "+open" },
-        p = { name = "+project" },
-        q = { name = "+quit" },
-        s = { name = "+search" },
-        t = { name = "+toggle" },
-      },
-    })
-  end,
   opts = {
-    icons = {
-      breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-      separator = "→ ", -- symbol used between a key and it's label
-      group = "+", -- symbol prepended to a group
-    },
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-    window = {
-      border = "none", -- none, single, double, shadow
-      position = "bottom", -- bottom, top
-      margin = { 1, 0, 0, 0 }, -- extra window margin [top, right, bottom, left]. When between 0 and 1, will be treated as a percentage of the screen size.
-      padding = { 1, 2, 1, 2 }, -- extra window padding [top, right, bottom, left]
-      winblend = 0, -- value between 0-100 0 for fully opaque and 100 for fully transparent
-      zindex = 1000, -- positive value to position WhichKey above other floating windows.
-    },
+    -- preset = "classic", -- modern, helix
     show_help = false,
     show_keys = false,
+    icons = {
+      breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
+      -- separator = "→ ", -- symbol used between a key and it's label
+      separator = "->", -- symbol used between a key and it's label
+      group = "+", -- symbol prepended to a group
+    },
+    win = {
+      -- don't allow the popup to overlap with the cursor
+      no_overlap = false,
+      -- width = 1,
+      -- height = { min = 4, max = 25 },
+      -- col = 0,
+      -- row = math.huge,
+      -- border = "none",
+      padding = { 1, 0 }, -- extra window padding [top/bottom, right/left]
+      title = false,
+      title_pos = "center",
+      zindex = 1000,
+      -- Additional vim.wo and vim.bo options
+      bo = {},
+      wo = {
+        -- winblend = 10, -- value between 0-100 0 for fully opaque and 100 for fully transparent
+      },
+    },
+    layout = {
+      width = { min = 20, max = 30 }, -- min and max width of the columns
+      spacing = 5, -- spacing between columns
+      align = "left", -- align columns left, center or right
+    },
+    spec = {
+      { "<leader>b", group = "buffer" },
+      { "<leader>c", group = "code" },
+      { "<leader>f", group = "find" },
+      { "<leader>o", group = "open" },
+      { "<leader>p", group = "project" },
+      { "<leader>q", group = "quit" },
+      { "<leader>s", group = "search" },
+      { "<leader>t", group = "toggle" },
+      {
+        "<leader>a",
+        group = "buffers",
+        expand = function()
+          return require("which-key.extras").expand.buf()
+        end,
+      },
+    },
+  },
+  keys = {
+    {
+      "<leader>?",
+      function()
+        require("which-key").show({ global = false })
+      end,
+      desc = "Buffer Local Keymaps (which-key)",
+    },
   },
 }

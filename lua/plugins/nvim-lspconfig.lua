@@ -119,6 +119,28 @@ return {
       --     filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
       --   })
       -- end,
+
+      -- ["groovyls"] = function()
+      --   lspconfig["groovyls"].setup({
+      --     cmd = { "/Users/petermariani/.local/share/nvim/mason/bin/groovy-language-server" },
+      --     on_attach = on_attach,
+      --     capabilities = capabilities,
+      --     filetypes = { "groovy" },
+      --   })
+      -- end,
+      ["pyright"] = function()
+        lspconfig["pyright"].setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+          filetypes = { "python" },
+        })
+      end,
+      ["html"] = function()
+        lspconfig["html"].setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+        })
+      end,
       ["lua_ls"] = function()
         -- configure lua server (with special settings)
         lspconfig["lua_ls"].setup({

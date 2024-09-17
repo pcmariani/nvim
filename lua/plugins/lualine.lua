@@ -12,8 +12,8 @@ return {
       yellow = "#FFDA7B",
       red = "#FF4A4A",
       fg = "#c3ccdc",
-      bg = "#090909",
-      -- bg = "#171717",
+      -- bg = "#090909",
+      bg = "#171717",
       inactive_bg = "#090909",
       semilightgray = "#666666",
     }
@@ -56,7 +56,7 @@ return {
     lualine.setup({
       options = {
         icons_enabled = false,
-        -- theme = "tundra",
+        theme = my_lualine_theme,
         -- theme = function()
         --   if vim.o.background == "dark" then
         --     return my_lualine_theme

@@ -102,6 +102,7 @@ return {
         lua = false, -- to disable a format, set to `false`
         -- help = { pattern = "^:%s*he?l?p?%s+", icon = "help" },
         help = false,
+        sendToTerm = { pattern = "^:%s*SendToTerm%s+", icon = string.gsub(vim.fn.getcwd(), "^/Users/petermariani", "~") .. " ❯", lang = "bash" },
         input = {}, -- Used by input()
       },
     },

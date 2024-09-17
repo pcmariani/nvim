@@ -36,7 +36,8 @@ return {
         -- "graphql",
         -- "emmet_ls",
         -- "prismals",
-        -- "pyright",
+        "pyright",
+        -- "groovyls",
       },
     })
 
@@ -47,6 +48,8 @@ return {
         -- "isort", -- python formatter
         -- "black", -- python formatter
         -- "pylint",
+        "ruff",
+        "mypy",
         "eslint_d",
       },
     })

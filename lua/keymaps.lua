@@ -38,11 +38,13 @@ vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], { desc = "Terminal Motion" }
 vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { desc = "Terminal Motion" })
 
 -- term send last command
-if jit.os == "Windows" then
-  vim.keymap.set("n", "<leader>v", ':w<cr>:TermExec cmd="r"<cr>', { desc = "Repeat Terminal Command (r)" })
-else
-  vim.keymap.set("n", "<leader>v", ":w<cr>:TermExec cmd='!!'<cr>:TermExec cmd=''<cr>", { desc = "Repeat Terminal Command (!!)" })
-end
+vim.keymap.set("n", "<leader>v", ":SendToTerm<cr>", { desc = "Send command to term" })
+vim.keymap.set("n", "<leader>V", ":SendToTerm ", { desc = "New command to term" })
+-- if jit.os == "Windows" then
+--   vim.keymap.set("n", "<leader>v", ':w<cr>:TermExec cmd="r"<cr>', { desc = "Repeat Terminal Command (r)" })
+-- else
+--   vim.keymap.set("n", "<leader>v", ":w<cr>:TermExec cmd='!!'<cr>:TermExec cmd=''<cr>", { desc = "Repeat Terminal Command (!!)" })
+-- end
 
 -- Cycle visual > visual block mode
 vim.keymap.set("x", "v", [[mode() ==# 'v' ? 'V' : mode() ==# '<C-v>' ? 'v' : '<C-q>']], { silent = true, expr = true })

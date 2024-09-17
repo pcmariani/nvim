@@ -100,10 +100,10 @@ return {
         }),
         -- sources for autocompletion
         sources = cmp.config.sources({
+          { name = "codeium" },
           { name = "nvim_lsp" },
           { name = "snippets" }, -- snippets
           { name = "path" }, -- file system paths
-          { name = "codeium" },
           -- { name = "orgmode" },
         }, {
           { name = "buffer" }, -- text within current buffer

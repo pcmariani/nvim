@@ -14,6 +14,6 @@ return {
     insert_mappings = true, -- whether or not the open mapping applies in insert mode
     terminal_mappings = true,
     autochdir = true,
-    close_on_exit = false, -- close the terminal window when the process exits
+    close_on_exit = true, -- close the terminal window when the process exits
   },
 }

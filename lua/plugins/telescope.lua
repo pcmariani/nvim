@@ -208,6 +208,7 @@ return {
           return true
         end,
       }) end, { desc = "Find Files" })
+      vim.keymap.set("n", "<leader>fg", function() builtin.git_files() end, { desc = "Find Git Files" })
       vim.keymap.set("n", "<leader>fr", function() builtin.oldfiles() end, { desc = 'Find Recent Files' })
       vim.keymap.set("n", "<leader>fc", function() builtin.find_files({ cwd = vim.fn.stdpath("config") }) end,
         { desc = "Find Config Files" })
