@@ -136,10 +136,11 @@ M.normal_esc_actions = function()
     --   vim.cmd('bdelete ' .. bnum)
     --   return
     -- end
-    if vim.fn.getbufvar(bnum, "&filetype") == "NvimTree" then
-      vim.cmd("NvimTreeClose")
-      return
-    elseif vim.fn.getbufvar(bnum, "&buftype") == "quickfix" then
+    -- if vim.fn.getbufvar(bnum, "&filetype") == "NvimTree" then
+    --   vim.cmd("NvimTreeClose")
+    --   return
+    -- end
+    if vim.fn.getbufvar(bnum, "&buftype") == "quickfix" then
       vim.cmd("cclose")
       return
     end
