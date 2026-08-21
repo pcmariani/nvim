@@ -1,0 +1,53 @@
+-- -- herdr-navigator.lua
+-- -- Seamless Ctrl+h/j/k/l navigation across Neovim splits AND the
+-- -- terminal multiplexer (herdr or tmux, detected automatically).
+-- --
+-- -- Logic: try Neovim split movement first; if at a split edge,
+-- -- delegate to the active multiplexer. Falls back to doing nothing
+-- -- when not inside any multiplexer (stays in Neovim).
+--
+-- local M = {}
+--
+-- local DIR_MAP = {
+--   h = "left",
+--   j = "down",
+--   k = "up",
+--   l = "right",
+-- }
+--
+-- local HERDR = "/opt/homebrew/bin/herdr"
+--
+-- --- Detects the active multiplexer. Returns "herdr", "tmux", or nil.
+-- local function detect_multiplexer()
+--   -- herdr sets HERDR in the environment
+--   if os.getenv("HERDR") then
+--     return "herdr"
+--   end
+--   -- tmux sets TMUX
+--   if os.getenv("TMUX") then
+--     return "tmux"
+--   end
+--   return nil
+-- end
+--
+-- --- Navigate in `direction` (vim key: h/j/k/l).
+-- --- Tries Neovim split movement first; if still in the same window,
+-- --- delegates to herdr or tmux depending on which is running.
+-- function M.navigate(direction)
+--   local cur_win = vim.api.nvim_get_current_win()
+--   vim.cmd("wincmd " .. direction)
+--   if cur_win == vim.api.nvim_get_current_win() then
+--     -- We're at a Neovim split edge — delegate to the multiplexer
+--     local mux = detect_multiplexer()
+--     if mux == "herdr" then
+--       vim.fn.jobstart({ HERDR, "pane", "focus", "--direction", DIR_MAP[direction] })
+--     elseif mux == "tmux" then
+--       -- Use tmux's select-pane directly (no plugin dependency needed)
+--       local tmux_dir = { h = "L", j = "D", k = "U", l = "R" }
+--       vim.fn.system({ "tmux", "select-pane", "-" .. tmux_dir[direction] })
+--     end
+--     -- If no multiplexer detected, stay put (already at Neovim edge)
+--   end
+-- end
+--
+-- return M
