@@ -16,7 +16,30 @@ require("herdr-splits").setup({
   -- Defaults shown. All fields optional.
   default_amount = 0.03, -- Herdr resize ratio
   neovim_amount = 3, -- Neovim resize cells
-  at_edge = "wrap", -- 'wrap' | 'stop' | 'split' | function
+  -- THE THIRD LAYER. Fires only when at a Neovim edge AND a Herdr edge
+  -- (nav.lua:215, "no herdr pane to cross into"), which is exactly the moment
+  -- to leave Herdr entirely. ctx.direction is already left|right|up|down,
+  -- matching AeroSpace's argument.
+  --
+  -- `--boundaries-action fail` makes "no window that way" a silent no-op
+  -- rather than a wrap, so a direction key never teleports you backwards.
+  --
+  -- vim.system, not vim.fn.system: async, so a navigation key never blocks on
+  -- a ~30ms process spawn. The plugin itself uses vim.system (conf.lua:45).
+  --
+  -- The Herdr half of this lives in ~/.config/herdr/nav-fallthrough.sh, bound
+  -- to ctrl-hjkl in ~/.config/herdr/config.toml. BOTH ARE REQUIRED: this hook
+  -- only runs when nvim has the pane, and that script only runs when it does
+  -- not. Removing either leaves half the keyboard wrapping.
+  at_edge = function(ctx) -- 'wrap' | 'stop' | 'split' | function
+    vim.system({
+      "/opt/homebrew/bin/aerospace", -- absolute: nvim may not have brew on PATH
+      "focus",
+      "--boundaries-action",
+      "fail",
+      ctx.direction,
+    })
+  end,
   ignored_buftypes = { "nofile", "quickfix", "prompt", "help", "terminal" },
   ignored_filetypes = {
     "NvimTree",
@@ -45,7 +68,12 @@ require("herdr-splits").setup({
   nav_keys = { left = "<C-h>", down = "<C-j>", up = "<C-k>", right = "<C-l>" },
   resize_keys = { left = "<M-h>", down = "<M-j>", up = "<M-k>", right = "<M-l>" },
   unzoom_on_nav = true, -- auto-unzoom when navigating away from a zoomed pane
-  nav_at_edge = "wrap", -- 'wrap' | 'stop' — Herdr pane-boundary wrap (distinct from at_edge)
+  -- 'stop', not 'wrap', so nothing in this stack ever wraps. Mostly moot now:
+  -- the Herdr-side keys go through nav-fallthrough.sh, which ignores this
+  -- setting entirely. It still governs ONE path -- the command-line window
+  -- (q:, q/, q?) at nav.lua:142, which consults nav_at_edge directly and
+  -- would otherwise wrap there while every other key does not.
+  nav_at_edge = "stop", -- 'wrap' | 'stop' — Herdr pane-boundary wrap (distinct from at_edge)
 })
 
 vim.keymap.set("n", "<C-h>", function() require("herdr-splits").move_cursor_left() end, { desc = "Navigate left" })
