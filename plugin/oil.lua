@@ -70,13 +70,29 @@ require("oil").setup({
     ["g?"]    = { "actions.show_help", mode = "n" },
     ["<CR>"]  = "actions.select",
     ["<C-s>"] = { "actions.select", opts = { vertical = true } },
-    ["<C-h>"] = { "actions.select", opts = { horizontal = true } },
+    -- <C-h> and <C-l> are NAVIGATION, so oil does not get them. They were
+    -- shadowing the global ctrl-hjkl keymaps (plugin/herdr-splits-nvim.lua:79-82)
+    -- buffer-locally, which made navigation die inside any oil buffer -- one of
+    -- the two holes in a key that is supposed to cross nvim splits, herdr panes
+    -- and macOS windows without the user tracking which layer they are in.
+    --
+    -- `false` and not deletion: use_default_keymaps is true below, so oil
+    -- re-binds its own <C-h>/<C-l> defaults if these entries are merely
+    -- removed. `false` is oil's documented way to drop a keymap (see the note
+    -- above this table).
+    ["<C-h>"] = false,
+    ["<C-l>"] = false,
+    -- The two displaced actions, rehomed. <C-x> for a horizontal split pairs
+    -- with <C-s> for a vertical one, which the old <C-h> never did; refresh
+    -- goes under the `g` prefix that already holds oil's other meta-actions
+    -- (g?, gs, gx, g., g\, g~).
+    ["<C-x>"] = { "actions.select", opts = { horizontal = true } },
+    ["gr"]    = { "actions.refresh", mode = "n" },
     ["<C-t>"] = { "actions.select", opts = { tab = true } },
     ["<C-p>"] = "actions.preview",
     ["<C-c>"] = { "actions.close", mode = "n" },
     ["q"]     = { "actions.close", mode = "n" },
     ["<Esc>"] = { "actions.close", mode = "n" },
-    ["<C-l>"] = "actions.refresh",
     ["-"]     = { "actions.parent", mode = "n" },
     ["_"]     = { "actions.open_cwd", mode = "n" },
     ["`"]     = { "actions.cd", mode = "n" },
