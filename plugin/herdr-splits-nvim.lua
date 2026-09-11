@@ -80,6 +80,45 @@ vim.keymap.set("n", "<C-h>", function() require("herdr-splits").move_cursor_left
 vim.keymap.set("n", "<C-j>", function() require("herdr-splits").move_cursor_down() end, { desc = "Navigate down" })
 vim.keymap.set("n", "<C-k>", function() require("herdr-splits").move_cursor_up() end, { desc = "Navigate up" })
 vim.keymap.set("n", "<C-l>", function() require("herdr-splits").move_cursor_right() end, { desc = "Navigate right" })
+-- TERMINAL MODE, 2026-09-11. The maps above are normal-mode only, so ctrl-hjkl
+-- did nothing inside an nvim `:terminal` -- the docked terminal was the second
+-- hole in a key meant to cross nvim splits, herdr panes and macOS windows
+-- without you tracking which layer you are in. (The first was oil, fixed in
+-- plugin/oil.lua.)
+--
+-- THE COST, deliberately accepted: these four no longer reach the shell in an
+-- nvim terminal. ctrl-l (clear-screen) and ctrl-k (kill-line) are the two real
+-- losses. ctrl-h is readline's backward-delete-char, but the Backspace key
+-- sends DEL rather than BS, so ordinary editing is untouched; ctrl-j is a
+-- newline that Enter still sends. Real terminal work happens in herdr panes --
+-- this buffer is the docked terminal.
+--
+-- `stopinsert` FIRST, because terminal-mode can run neither a `wincmd` nor a
+-- herdr jobstart. It is the exact inverse of the `startinsert` that the
+-- WinEnter autocmd in lua/config/autocmds.lua uses to ENTER terminal mode.
+--
+-- THE RE-ENTER GUARD IS LOAD-BEARING, not tidiness. nav_at_edge is "stop"
+-- above, so "no window that way" is a deliberate silent no-op -- which would
+-- leave you in NORMAL mode in a terminal buffer, where your next keystroke is
+-- a vim command instead of shell input. That WinEnter autocmd cannot cover it:
+-- it fires on a window CHANGE, and the whole point of this case is that the
+-- window did not change. The same guard covers a hop out to a herdr pane,
+-- which is an async jobstart that likewise leaves our window untouched -- so
+-- nvim is already back in terminal mode by the time you return to it.
+local function term_nav(dir)
+  vim.cmd("stopinsert")
+  local win = vim.api.nvim_get_current_win()
+  require("herdr-splits")["move_cursor_" .. dir]()
+  if win == vim.api.nvim_get_current_win() and vim.bo.buftype == "terminal" then
+    vim.cmd("startinsert")
+  end
+end
+
+vim.keymap.set("t", "<C-h>", function() term_nav("left") end, { desc = "Navigate left (from terminal)" })
+vim.keymap.set("t", "<C-j>", function() term_nav("down") end, { desc = "Navigate down (from terminal)" })
+vim.keymap.set("t", "<C-k>", function() term_nav("up") end, { desc = "Navigate up (from terminal)" })
+vim.keymap.set("t", "<C-l>", function() term_nav("right") end, { desc = "Navigate right (from terminal)" })
+
 vim.keymap.set("n", "<M-h>", function() require("herdr-splits").resize_left() end, { desc = "Resize left" })
 vim.keymap.set("n", "<M-j>", function() require("herdr-splits").resize_down() end, { desc = "Resize down" })
 vim.keymap.set("n", "<M-k>", function() require("herdr-splits").resize_up() end, { desc = "Resize up" })
