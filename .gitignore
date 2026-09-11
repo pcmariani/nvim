@@ -1,1 +1,12 @@
-HANDOFF.md
+# HANDOFF.md IS TRACKED ON PURPOSE as of 2026-09-11. Do not re-ignore it.
+#
+# It was ignored here from f4fa44a, which meant it never appeared in
+# `git status`, nothing could ever contradict it, and it drifted for three
+# weeks asserting -- in three separate places -- that ~/.config/nvim was not a
+# git repository at all. By then this repo had a public remote and pushed
+# history, so a reader could have concluded their edits were unrecoverable, or
+# run `git init` over it.
+#
+# Tracking it is the only mechanism that makes that kind of staleness visible.
+# Scanned before tracking: no client names, no credentials. THIS REMOTE IS
+# PUBLIC, so scan again before adding anything sensitive to it.
