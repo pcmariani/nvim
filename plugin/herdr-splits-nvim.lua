@@ -31,14 +31,31 @@ require("herdr-splits").setup({
   -- to ctrl-hjkl in ~/.config/herdr/config.toml. BOTH ARE REQUIRED: this hook
   -- only runs when nvim has the pane, and that script only runs when it does
   -- not. Removing either leaves half the keyboard wrapping.
+  -- j/k CROSS THE MONITOR BOUNDARY, h/l DELIBERATELY DO NOT. Added 2026-09-11
+  -- to match space-hjkl and the ctrl-hjkl rule in ~/.config/karabiner.edn,
+  -- which this hook has to agree with: the reported symptom was "space-j
+  -- focuses a window below even if it is on another workspace on another
+  -- monitor, but ctrl-j does not". Directional `focus` defaults --boundaries
+  -- to `workspace`, so without the flag the hop out stopped at the workspace
+  -- edge. The monitors are stacked vertically, so only up/down ever needs to
+  -- leave the workspace -- the flag on h/l too would let a sideways press jump
+  -- monitors wherever the frames overlap.
+  --
+  -- THE SAME FLAG LIVES IN TWO MORE PLACES, because this hook only runs when
+  -- nvim holds the pane: ~/.config/karabiner.edn's ctrl-hjkl rule and
+  -- ~/.config/herdr/nav-fallthrough.sh. All three must agree or ctrl-j behaves
+  -- differently depending on which app happens to hold focus.
   at_edge = function(ctx) -- 'wrap' | 'stop' | 'split' | function
-    vim.system({
+    local cmd = {
       "/opt/homebrew/bin/aerospace", -- absolute: nvim may not have brew on PATH
       "focus",
-      "--boundaries-action",
-      "fail",
-      ctx.direction,
-    })
+    }
+    if ctx.direction == "down" or ctx.direction == "up" then
+      table.insert(cmd, "--boundaries")
+      table.insert(cmd, "all-monitors-outer-frame")
+    end
+    vim.list_extend(cmd, { "--boundaries-action", "fail", ctx.direction })
+    vim.system(cmd)
   end,
   ignored_buftypes = { "nofile", "quickfix", "prompt", "help", "terminal" },
   ignored_filetypes = {
