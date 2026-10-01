@@ -45,17 +45,13 @@ require("herdr-splits").setup({
   -- nvim holds the pane: ~/.config/karabiner.edn's ctrl-hjkl rule and
   -- ~/.config/herdr/nav-fallthrough.sh. All three must agree or ctrl-j behaves
   -- differently depending on which app happens to hold focus.
+  -- The AeroSpace command itself now lives in lua/config/aerospace-edge.lua, shared with
+  -- the Neovide mapping (lua/config/neovide-nav.lua), so nvim has ONE definition of the
+  -- flags. It builds exactly the command that used to be written out here, and
+  -- test/nav_test.lua pins it. The Karabiner rule and nav-fallthrough.sh still carry their
+  -- own copy and must keep agreeing with it.
   at_edge = function(ctx) -- 'wrap' | 'stop' | 'split' | function
-    local cmd = {
-      "/opt/homebrew/bin/aerospace", -- absolute: nvim may not have brew on PATH
-      "focus",
-    }
-    if ctx.direction == "down" or ctx.direction == "up" then
-      table.insert(cmd, "--boundaries")
-      table.insert(cmd, "all-monitors-outer-frame")
-    end
-    vim.list_extend(cmd, { "--boundaries-action", "fail", ctx.direction })
-    vim.system(cmd)
+    require("config.aerospace-edge").focus(ctx.direction)
   end,
   ignored_buftypes = { "nofile", "quickfix", "prompt", "help", "terminal" },
   ignored_filetypes = {
