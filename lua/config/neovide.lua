@@ -50,8 +50,8 @@ vim.g.neovide_floating_blur_amount_y = 0.5
 -- =====================================================
 -- Font + Native Zoom
 -- =====================================================
--- local font_family = "Iosevka Nerd Font Mono"
-local font_family = "Monaco Nerd Font Mono"
+-- local font_family = "Monaco Nerd Font Mono"
+local font_family = "Iosevka Nerd Font Mono"
 local font_size = 16
 local font_linespace = 2
 -- Persist per-font linespace preferences
