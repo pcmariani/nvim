@@ -1,4 +1,4 @@
--- Entry point for the space-shift-s scratch pad (context-based-mac's
+-- Entry point for the space-x scratch pad (context-based-mac's
 -- scripts/scratch-command.sh runs `nvim --noplugin -u` on this file). Not the
 -- everyday config on purpose: no plugins, so no LSP, no blink, no ui2 message
 -- routing and no tiny-cmdline, and nothing here may call a plugin (Snacks,
