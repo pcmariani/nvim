@@ -92,6 +92,11 @@ vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
   return "<esc>"
 end, { expr = true, desc = "Escape, clear hlsearch" })
 vim.keymap.set("n", "<leader>qq", "<cmd>confirm qa<cr>", { desc = "Quit All" })
+
+-- Ctrl-Z would suspend nvim inside the panel's pty. Nothing can resume it
+-- there, and paneld blocks on the stopped process when it rebuilds the surface,
+-- which hung the whole daemon (2026-10-27). Swallow it in every mode.
+vim.keymap.set({ "n", "i", "x", "s", "o", "c", "t" }, "<C-z>", "<Nop>", { desc = "No suspend in the pad" })
 vim.keymap.set("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 vim.keymap.set("n", "<leader><C-o>", "<C-i>", { silent = true, desc = "Jump Forward" })
 vim.keymap.set("n", "<C-i>", "<C-i>", { silent = true })
