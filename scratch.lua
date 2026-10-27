@@ -13,6 +13,10 @@ vim.g.maplocalleader = "\\"
 vim.loader.enable()
 require("config.colorscheme")
 
+-- vscode's body text is #d4d4d4, which reads grey on the pad's translucent
+-- background (2026-10-27, the user). Brighter plain text, nothing else changed.
+vim.api.nvim_set_hl(0, "Normal", { fg = "#f0f0f0", update = true })
+
 -- OPTIONS --
 
 -- Basics
@@ -29,7 +33,7 @@ vim.o.laststatus = 1
 vim.o.cmdheight = 0
 vim.o.cursorline = true
 vim.opt.equalalways = false
-vim.opt.signcolumn = "auto"
+vim.opt.signcolumn = "no"
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.fillchars = { eob = " " }
@@ -159,10 +163,7 @@ end, { desc = "Replace Visual Selection" })
 local fns = require("util.functions")
 vim.keymap.set("n", "<leader>tl", function() vim.o.number = not vim.o.number end,
   { silent = true, desc = "Toggle Line Numbers" })
-vim.keymap.set("n", "<leader>tL", function() fns.toggleLeftColumns(1) end,
-  { silent = true, desc = "Toggle Line Numbers (all)" })
 vim.keymap.set("n", "<leader>tw", function() fns.toggle_wrap() end, { silent = true, desc = "Toggle Wrap (buffer)" })
-vim.keymap.set("n", "<leader>tW", function() fns.toggle_wrap(true) end, { silent = true, desc = "Toggle Wrap (all)" })
 vim.keymap.set("n", "<leader>tS", function() vim.wo.spell = not vim.wo.spell end,
   { silent = true, desc = "Toggle Spelling" })
 vim.keymap.set("n", "]s", "]s z=", { remap = true, desc = "Next misspelling + suggest" })
