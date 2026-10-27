@@ -124,23 +124,6 @@ vim.keymap.set("v", "p", '"_dP', { desc = "Paste without yanking" })
 -- Cycle visual > visual line > visual block
 vim.keymap.set("x", "v", [[mode() ==# 'v' ? 'V' : mode() ==# '<C-v>' ? 'v' : '<C-q>']], { silent = true, expr = true })
 
-
--- search
--- global search for word under cursor and send to quickfix
-vim.keymap.set(
-  "n",
-  "<leader>f/",
-  '/\\V<C-r>=expand("<cword>")<CR><CR>:lua require("util.qf").search_to_qf()<CR>',
-  { silent = true, desc = "Search Word Under Cursor" }
-)
--- local search for visual selection and send to quickfix
-vim.keymap.set(
-  "v",
-  "<leader>f/",
-  [["hy/<C-r>h<CR><S-n>:lua require("util.qf").search_to_qf()<CR>]],
-  { silent = true, desc = "Search Visual Selection" }
-)
-
 -- Search/Replace ---
 -- start local whole file substitution
 vim.keymap.set("n", "<leader>R", [[:%s///gc<Left><Left><Left><Left>]], { noremap = true, desc = "Replace in file" })
