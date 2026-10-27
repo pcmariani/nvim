@@ -26,7 +26,7 @@ vim.o.swapfile = false
 vim.o.number = false
 vim.o.relativenumber = false
 vim.o.laststatus = 1
-vim.o.cmdheight = 1
+vim.o.cmdheight = 0
 vim.o.cursorline = true
 vim.opt.equalalways = false
 vim.opt.signcolumn = "auto"
@@ -85,6 +85,9 @@ vim.keymap.set("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<c
 vim.keymap.set("i", ",", ",<c-g>u")
 vim.keymap.set("i", ".", ".<c-g>u")
 vim.keymap.set("i", ";", ";<c-g>u")
+
+-- buffer
+vim.keymap.set("n", "<Leader>bs", ":w<cr>", { desc = "Save Buffer", silent = true })
 
 -- misc
 vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
@@ -154,8 +157,8 @@ end, { desc = "Replace Visual Selection" })
 
 -- functions
 local fns = require("util.functions")
-vim.keymap.set("n", "<leader>tl", function() fns.toggleLeftColumns() end,
-  { silent = true, desc = "Toggle Line Numbers (buffer)" })
+vim.keymap.set("n", "<leader>tl", function() vim.o.number = not vim.o.number end,
+  { silent = true, desc = "Toggle Line Numbers" })
 vim.keymap.set("n", "<leader>tL", function() fns.toggleLeftColumns(1) end,
   { silent = true, desc = "Toggle Line Numbers (all)" })
 vim.keymap.set("n", "<leader>tw", function() fns.toggle_wrap() end, { silent = true, desc = "Toggle Wrap (buffer)" })
