@@ -1,21 +1,24 @@
--- ctrl-hjkl in Neovide: move between nvim splits, and at the edge hand off to the
--- neighbouring AeroSpace window -- the same layering the terminal has (nvim split, then herdr
--- pane, then window), minus herdr, which a GUI window is not inside.
+-- ctrl-hjkl in Neovide, and in nvim in a plain Ghostty window (no herdr): move between nvim
+-- splits, and at the edge hand off to the neighbouring AeroSpace window -- the same layering
+-- the terminal has (nvim split, then herdr pane, then window), minus herdr, which neither
+-- of these is inside.
 --
 -- Why this exists (2026-10-01): the herdr-splits mappings only load inside a herdr pane, so
 -- Neovide had no ctrl-hjkl at all. Karabiner must also be told to leave these keys alone for
 -- Neovide: that exclusion matches the bundle identifier com.neovide.neovide, which only the
 -- binary inside Neovide.app carries (see `argv` for neovide in ~/.config/context/apps.toml).
 --
--- Active only under Neovide. Inside a herdr pane the herdr-splits plugin loads later and its
--- mappings win, which is what you want there.
+-- Active under Neovide, and in plain Ghostty (lua/config/navd-claim.lua decides; there nvim
+-- also tells the navd daemon it has the focus, so ctrl-hjkl reaches nvim at all). Inside a
+-- herdr pane the herdr-splits plugin loads later and its mappings win, which is what you want
+-- there, and navd-claim stays off under herdr.
 --
 -- INSERT MODE IS LEFT ALONE: ctrl-h is backspace, ctrl-j a newline.
 -- TERMINAL BUFFERS: leave terminal mode only when there is a split to move to; at an edge
 -- the hand-off happens from terminal mode itself (see navigate_from_terminal). THE COST,
 -- as in plugin/herdr-splits-nvim.lua's terminal mappings: ctrl-l
 -- (clear screen) and ctrl-k (kill line) no longer reach the shell in an nvim terminal.
-if not vim.g.neovide then
+if not (vim.g.neovide or require("config.navd-claim").enabled()) then
   return
 end
 
