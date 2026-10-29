@@ -22,6 +22,10 @@ local edge = require("config.aerospace-edge")
 --    context repo fails if one creeps back into this file).
 check("binary is the installed navd", edge.BIN, "/Users/petermariani/.local/bin/navd")
 check("left",  edge.command("left"),  { BIN, "focus", "left" })
+local real_system = vim.system
+vim.system = function() error("ENOENT: no such file or directory") end
+check("the default spawn does not raise when navd is missing", pcall(edge.run, { BIN, "focus", "left" }), true)
+vim.system = real_system
 check("right", edge.command("right"), { BIN, "focus", "right" })
 check("down",  edge.command("down"),  { BIN, "focus", "down" })
 check("up",    edge.command("up"),    { BIN, "focus", "up" })
@@ -245,6 +249,12 @@ complete()
 vim.wait(150, function() return false end, 10)
 check("...and nothing queued runs after it", started, { "claim " .. PID, "release " .. PID })
 auto = true
+
+-- an nvim that never gained focus (a script, $EDITOR) has nothing to release at exit
+claim.setup()
+reset()
+vim.api.nvim_exec_autocmds("VimLeavePre", {})
+check("VimLeavePre without a claim spawns nothing", started, {})
 
 -- a spawn that throws (navd missing) never wedges the queue
 reset()

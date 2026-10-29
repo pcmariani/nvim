@@ -55,6 +55,7 @@ local queue = {}
 local running = false
 local focused = false
 local generation = 0
+local claimed_ever = false  -- an nvim that never claimed (a script, $EDITOR) has nothing to release
 
 local function pump()
   if running then
@@ -83,6 +84,7 @@ end
 
 local function gained()
   focused = true
+  claimed_ever = true
   generation = generation + 1
   local mine = generation
   enqueue("claim")
@@ -105,6 +107,9 @@ local function leaving()
   focused = false
   generation = generation + 1
   queue = {}
+  if not claimed_ever then
+    return
+  end
   -- Not queued: nvim is exiting. Detached so exit does not wait for it.
   pcall(M.run, M.command("release", vim.fn.getpid()), { detach = true })
 end
@@ -113,7 +118,7 @@ function M.setup()
   if not M.enabled() then
     return
   end
-  queue, running, focused = {}, false, false
+  queue, running, focused, claimed_ever = {}, false, false, false
   generation = generation + 1
   local group = vim.api.nvim_create_augroup("NavdClaim", { clear = true })
   local function on(events, fn)

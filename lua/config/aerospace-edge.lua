@@ -22,7 +22,8 @@ function M.command(direction)
 end
 
 M.run = function(cmd)
-  vim.system(cmd)
+  -- navd missing or not executable: a navigation key must not raise.
+  pcall(vim.system, cmd)
 end
 
 function M.focus(direction)
