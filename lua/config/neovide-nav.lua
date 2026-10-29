@@ -13,7 +13,11 @@
 -- herdr pane the herdr-splits plugin loads later and its mappings win, which is what you want
 -- there, and navd-claim stays off under herdr.
 --
--- INSERT MODE IS LEFT ALONE: ctrl-h is backspace, ctrl-j a newline.
+-- INSERT MODE IS LEFT ALONE: ctrl-h is backspace, ctrl-j a newline. Select, operator-pending
+-- and command-line mode are left alone too (ctrl-h/j/k/l mean something there).
+-- VISUAL MODE (x): leave it only when there is a split to move to (a window change would
+-- carry the selection into the other buffer, measured); at an edge, hand off with the
+-- selection intact. THE COST: ctrl-j/ctrl-k no longer move the cursor while selecting.
 -- TERMINAL BUFFERS: leave terminal mode only when there is a split to move to; at an edge
 -- the hand-off happens from terminal mode itself (see navigate_from_terminal). THE COST,
 -- as in plugin/herdr-splits-nvim.lua's terminal mappings: ctrl-l
@@ -56,7 +60,18 @@ function M.navigate_from_terminal(key)
   vim.cmd("wincmd " .. key)
 end
 
+function M.navigate_from_visual(key)
+  if vim.fn.winnr(key) == vim.fn.winnr() then
+    edge.focus(DIRS[key])
+    return
+  end
+  vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "nx", false)
+  vim.cmd("wincmd " .. key)
+end
+
 for key, dir in pairs(DIRS) do
+  vim.keymap.set("x", "<C-" .. key .. ">", function() M.navigate_from_visual(key) end,
+    { desc = "Navigate " .. dir .. " (from visual)" })
   vim.keymap.set("n", "<C-" .. key .. ">", function() M.navigate(key) end,
     { desc = "Navigate " .. dir .. " (splits, then windows)" })
   vim.keymap.set("t", "<C-" .. key .. ">", function() M.navigate_from_terminal(key) end,

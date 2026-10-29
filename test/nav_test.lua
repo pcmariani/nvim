@@ -79,13 +79,35 @@ for _, k in ipairs({ "h", "j", "k", "l" }) do nav.navigate(k) end
 check("single window hands every direction off", calls, { "left", "down", "up", "right" })
 
 -- 3. Mappings exist, in normal and terminal mode, with descriptions
-for _, mode in ipairs({ "n", "t" }) do
+for _, mode in ipairs({ "n", "t", "x" }) do
   for _, k in ipairs({ "h", "j", "k", "l" }) do
     local m = vim.fn.maparg("<C-" .. k .. ">", mode, false, true)
     check(("<C-%s> is mapped in %s mode"):format(k, mode), m.callback ~= nil and (m.desc or "") ~= "", true)
   end
 end
 check("insert mode is left alone: <C-h> unmapped", vim.fn.maparg("<C-h>", "i"), "")
+for _, mode in ipairs({ "s", "o", "c" }) do
+  check(("%s mode is left alone: <C-h> unmapped"):format(mode), vim.fn.maparg("<C-h>", mode), "")
+end
+
+-- 3b. Visual mode: leave it only when a split is there, hand off with the selection intact
+fresh("vsplit")
+vim.api.nvim_buf_set_lines(0, 0, -1, false, { "one", "two", "three" })
+local vleft = vim.api.nvim_get_current_win()
+vim.api.nvim_feedkeys("v", "nx", false)
+check("in visual mode", vim.fn.mode(), "v")
+nav.navigate_from_visual("l")
+check("visual: l moves to the right split", vim.api.nvim_get_current_win() ~= vleft, true)
+check("...and visual mode is over, not carried along", vim.fn.mode(), "n")
+check("...without calling AeroSpace", calls, {})
+vim.api.nvim_set_current_win(vleft)
+vim.api.nvim_feedkeys("v", "nx", false)
+check("back in visual mode on the left split", vim.fn.mode(), "v")
+nav.navigate_from_visual("h")
+check("visual: h at the left edge hands off", calls, { "left" })
+check("...keeping the selection", vim.fn.mode(), "v")
+check("...and staying in the window", vim.api.nvim_get_current_win(), vleft)
+vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "nx", false)
 
 -- 4. Terminal navigation: stopinsert first, then the same logic
 fresh("vsplit")
@@ -103,7 +125,7 @@ check("...and stays in the terminal window", vim.api.nvim_get_current_win(), ter
 
 -- 5. Gated: outside Neovide and outside plain Ghostty the module defines nothing
 local function clear_maps()
-  for _, mode in ipairs({ "n", "t" }) do for _, k in ipairs({ "h", "j", "k", "l" }) do pcall(vim.keymap.del, mode, "<C-" .. k .. ">") end end
+  for _, mode in ipairs({ "n", "t", "x" }) do for _, k in ipairs({ "h", "j", "k", "l" }) do pcall(vim.keymap.del, mode, "<C-" .. k .. ">") end end
 end
 vim.g.neovide = nil
 vim.env.TERM_PROGRAM = "Apple_Terminal"
