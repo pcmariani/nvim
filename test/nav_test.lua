@@ -12,15 +12,17 @@ local function check(label, got, want)
   failures[#failures + 1] = string.format("FAIL: %s\n   got : %s\n   want: %s", label, vim.inspect(got), vim.inspect(want))
 end
 
-local BIN = "/opt/homebrew/bin/aerospace"
+local BIN = vim.fn.expand("~/.local/bin/navd")
 local edge = require("config.aerospace-edge")
 
--- 1. The AeroSpace command, per direction. These flags must agree with the Karabiner rule
---    and ~/.config/herdr/nav-fallthrough.sh: up/down cross monitors, left/right do not.
-check("left",  edge.command("left"),  { BIN, "focus", "--boundaries-action", "fail", "left" })
-check("right", edge.command("right"), { BIN, "focus", "--boundaries-action", "fail", "right" })
-check("down",  edge.command("down"),  { BIN, "focus", "--boundaries", "all-monitors-outer-frame", "--boundaries-action", "fail", "down" })
-check("up",    edge.command("up"),    { BIN, "focus", "--boundaries", "all-monitors-outer-frame", "--boundaries-action", "fail", "up" })
+-- 1. The hand-off command, per direction: `navd focus <dir>` and nothing else. The AeroSpace
+--    flags live in ~/.config/navd/policy.toml (tests/test_nav_flags_single_source.py in the
+--    context repo fails if one creeps back into this file).
+check("binary is the installed navd", edge.BIN, "/Users/petermariani/.local/bin/navd")
+check("left",  edge.command("left"),  { BIN, "focus", "left" })
+check("right", edge.command("right"), { BIN, "focus", "right" })
+check("down",  edge.command("down"),  { BIN, "focus", "down" })
+check("up",    edge.command("up"),    { BIN, "focus", "up" })
 
 -- 2. Navigation. Stub only the process spawn.
 local calls = {}

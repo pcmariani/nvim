@@ -21,8 +21,8 @@ require("herdr-splits").setup({
   -- to leave Herdr entirely. ctx.direction is already left|right|up|down,
   -- matching AeroSpace's argument.
   --
-  -- `--boundaries-action fail` makes "no window that way" a silent no-op
-  -- rather than a wrap, so a direction key never teleports you backwards.
+  -- A no-op when there is no window that way (never a wrap), and j/k crossing onto the next
+  -- monitor while h/l do not: that is decided by navd's policy, not here.
   --
   -- vim.system, not vim.fn.system: async, so a navigation key never blocks on
   -- a ~30ms process spawn. The plugin itself uses vim.system (conf.lua:45).
@@ -31,25 +31,11 @@ require("herdr-splits").setup({
   -- to ctrl-hjkl in ~/.config/herdr/config.toml. BOTH ARE REQUIRED: this hook
   -- only runs when nvim has the pane, and that script only runs when it does
   -- not. Removing either leaves half the keyboard wrapping.
-  -- j/k CROSS THE MONITOR BOUNDARY, h/l DELIBERATELY DO NOT. Added 2026-09-11
-  -- to match space-hjkl and the ctrl-hjkl rule in ~/.config/karabiner.edn,
-  -- which this hook has to agree with: the reported symptom was "space-j
-  -- focuses a window below even if it is on another workspace on another
-  -- monitor, but ctrl-j does not". Directional `focus` defaults --boundaries
-  -- to `workspace`, so without the flag the hop out stopped at the workspace
-  -- edge. The monitors are stacked vertically, so only up/down ever needs to
-  -- leave the workspace -- the flag on h/l too would let a sideways press jump
-  -- monitors wherever the frames overlap.
   --
-  -- THE SAME FLAG LIVES IN TWO MORE PLACES, because this hook only runs when
-  -- nvim holds the pane: ~/.config/karabiner.edn's ctrl-hjkl rule and
-  -- ~/.config/herdr/nav-fallthrough.sh. All three must agree or ctrl-j behaves
-  -- differently depending on which app happens to hold focus.
-  -- The AeroSpace command itself now lives in lua/config/aerospace-edge.lua, shared with
-  -- the Neovide mapping (lua/config/neovide-nav.lua), so nvim has ONE definition of the
-  -- flags. It builds exactly the command that used to be written out here, and
-  -- test/nav_test.lua pins it. The Karabiner rule and nav-fallthrough.sh still carry their
-  -- own copy and must keep agreeing with it.
+  -- The window-manager call is lua/config/aerospace-edge.lua, shared with the Neovide
+  -- mapping (lua/config/neovide-nav.lua). It runs `navd focus <direction>`, as do
+  -- nav-fallthrough.sh and the Karabiner ctrl-hjkl rule, so the flags exist once, in
+  -- ~/.config/navd/policy.toml. test/nav_test.lua pins the command.
   at_edge = function(ctx) -- 'wrap' | 'stop' | 'split' | function
     require("config.aerospace-edge").focus(ctx.direction)
   end,

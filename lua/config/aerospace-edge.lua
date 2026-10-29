@@ -1,32 +1,24 @@
--- How nvim hands a direction to AeroSpace when it has no split that way.
+-- How nvim hands a direction to the window manager when it has no split that way.
 --
--- THE ONE DEFINITION of the flags. Before 2026-10-01 the same flags lived in three places
--- that "must all agree" (the ctrl-hjkl rule in ~/.config/karabiner.edn, herdr's
--- ~/.config/herdr/nav-fallthrough.sh, and the at_edge function in
--- plugin/herdr-splits-nvim.lua), or ctrl-j behaved differently depending on which app
--- held focus. nvim's two callers now share this module; Karabiner and the herdr script
--- still carry their own copy and must keep agreeing with this one.
+-- It asks `navd focus <direction>`. The AeroSpace flags (which directions cross onto the
+-- next monitor, that "no window that way" is a silent no-op and never a wrap) live in ONE
+-- place, ~/.config/navd/policy.toml; this file, Karabiner's ctrl-hjkl rule and herdr's
+-- ~/.config/herdr/nav-fallthrough.sh all call navd instead of carrying their own copy.
+-- Before 2026-10-29 the flags were written out in each of them and had to be kept in
+-- agreement by hand, or ctrl-j behaved differently depending on which app held focus.
 --
--- up/down cross monitors and left/right deliberately do not: the monitors are stacked
--- vertically, so only up/down ever needs to leave the workspace, and the flag on left/right
--- would let a sideways press jump monitors wherever the frames overlap. `--boundaries-action
--- fail` makes "no window that way" a silent no-op instead of a wrap.
+-- `navd focus` works with no daemon running (it falls back to a direct AeroSpace call).
 --
--- The binary is absolute: nvim, especially one started from Finder, may not have Homebrew on
--- PATH. `run` is a field so tests can replace it; vim.system is async, so a navigation key
+-- The binary is absolute: nvim, especially one started from Finder, may not have ~/.local/bin
+-- on PATH. `run` is a field so tests can replace it; vim.system is async, so a navigation key
 -- never blocks on a process spawn.
 local M = {}
 
-M.BIN = "/opt/homebrew/bin/aerospace"
+M.BIN = vim.fn.expand("~/.local/bin/navd")
 
 -- Pure: the argv for a direction ("left" | "right" | "up" | "down").
 function M.command(direction)
-  local cmd = { M.BIN, "focus" }
-  if direction == "down" or direction == "up" then
-    vim.list_extend(cmd, { "--boundaries", "all-monitors-outer-frame" })
-  end
-  vim.list_extend(cmd, { "--boundaries-action", "fail", direction })
-  return cmd
+  return { M.BIN, "focus", direction }
 end
 
 M.run = function(cmd)
