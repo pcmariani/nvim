@@ -28,6 +28,18 @@ vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cur
 -- buffer, which beat the 2 set below (measured 2026-10-30: ft=markdown sw=4).
 vim.g.markdown_recommended_style = 0
 
+-- Markdown headings fold by section (cbm-019), through Neovim's bundled treesitter markdown
+-- parser: no plugin, nothing extra to start. foldlevelstart makes every fold open when a
+-- buffer is first shown, so the pad opens looking the same as before; zc/zo/za/zM/zR as usual.
+vim.o.foldlevelstart = 99
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+  end,
+})
+
 -- PLUGIN ALLOWLIST (cbm-035). The pad does not run init.lua, so no plugin loads unless it is
 -- named here; --noplugin on the command line keeps the rest of the packpath out. Add a
 -- plugin only after measuring what it costs at startup (the pad relaunches every time it
