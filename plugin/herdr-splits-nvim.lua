@@ -119,6 +119,7 @@ vim.keymap.set("t", "<C-k>", function() term_nav("up") end, { desc = "Navigate u
 vim.keymap.set("t", "<C-l>", function() term_nav("right") end, { desc = "Navigate right (from terminal)" })
 
 vim.keymap.set("n", "<M-h>", function() require("herdr-splits").resize_left() end, { desc = "Resize left" })
-vim.keymap.set("n", "<M-j>", function() require("herdr-splits").resize_down() end, { desc = "Resize down" })
-vim.keymap.set("n", "<M-k>", function() require("herdr-splits").resize_up() end, { desc = "Resize up" })
+-- No <M-j>/<M-k> here: those are "Move line down/up" in lua/config/keymaps.lua (cbm-022).
+-- A normal-mode resize map on them shadowed the line move whenever nvim ran in herdr.
+-- Pane resize up and down is still herdr's alt+j/alt+k from any pane that is not nvim.
 vim.keymap.set("n", "<M-l>", function() require("herdr-splits").resize_right() end, { desc = "Resize right" })
