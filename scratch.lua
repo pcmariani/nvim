@@ -28,6 +28,18 @@ vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cur
 -- buffer, which beat the 2 set below (measured 2026-10-30: ft=markdown sw=4).
 vim.g.markdown_recommended_style = 0
 
+-- PLUGIN ALLOWLIST (cbm-035). The pad does not run init.lua, so no plugin loads unless it is
+-- named here; --noplugin on the command line keeps the rest of the packpath out. Add a
+-- plugin only after measuring what it costs at startup (the pad relaunches every time it
+-- opens). Measured 2026-10-30, median of 9 headless starts: 67 ms bare, 85 ms with markdown-plus.
+local allowlist = {
+  { src = "https://github.com/YousefHadder/markdown-plus.nvim", setup = function() require("markdown-plus").setup({}) end },
+}
+vim.pack.add(vim.tbl_map(function(p) return p.src end, allowlist), { confirm = false })
+for _, p in ipairs(allowlist) do
+  p.setup()
+end
+
 -- OPTIONS --
 
 -- Basics

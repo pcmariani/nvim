@@ -87,6 +87,20 @@ def split_walk():
                               env=env, capture_output=True, text=True, timeout=20).stdout.strip()
 
 
+def active_plugins():
+    """Names of the vim.pack plugins the pad actually loads (cbm-035)."""
+    lua = ('lua local n = {}; for _, p in ipairs(vim.pack.get(nil, {info = false})) do '
+           'if p.active then n[#n + 1] = p.spec.name end end; table.sort(n); '
+           'io.stdout:write(table.concat(n, ",")); vim.cmd("qa!")')
+    with tempfile.TemporaryDirectory() as tmp:
+        pad = os.path.join(tmp, "pad.md")
+        open(pad, "w").write(TEXT)
+        env = {**os.environ, "XDG_STATE_HOME": os.path.join(tmp, "state")}
+        out = subprocess.run([NVIM, "--noplugin", "-u", SCRATCH, "--headless", pad, "-c", lua],
+                             env=env, capture_output=True, text=True, timeout=20).stdout.strip()
+    return out.split(",")
+
+
 def case(name, keys):
     tmp = tempfile.mkdtemp()
     try:
@@ -124,6 +138,12 @@ def main():
     # The pad sets splitright and splitbelow, so after vsplit + split window 1 is the full-height
     # left column, 2 is top right and 3 bottom right. From 1: l -> 2, j -> 3, h -> 1, k -> 1 (edge).
     check("ctrl-hjkl walk the pad's splits, and stop at an edge", split_walk(), "2,3,1,1")
+
+    # Only the allowlist and the colour schemes load; the heavy plugins of the main config do not.
+    loaded = active_plugins()
+    check("the allowlisted markdown-plus is loaded", "markdown-plus.nvim" in loaded, True)
+    heavy = {"blink.cmp", "nvim-lspconfig", "snacks.nvim", "fzf-lua", "mason.nvim", "conform.nvim"}
+    check("the main config's heavy plugins are not loaded", sorted(heavy & set(loaded)), [])
 
     print("FAILED" if failures else "all passed")
     return 1 if failures else 0
