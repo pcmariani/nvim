@@ -37,8 +37,36 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     vim.opt_local.foldmethod = "expr"
     vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    vim.opt_local.foldtext = "v:lua.PadFoldText()"
   end,
 })
+
+-- The closed fold line: an arrow, the heading in its heading colour, then the line count in
+-- the comment colour. foldtext needs a global to call. (Neovim 0.12 has no
+-- vim.treesitter.foldtext(), so the heading is coloured here by its `#` count.)
+function _G.PadFoldText()
+  local lines = vim.v.foldend - vim.v.foldstart + 1
+  local text = vim.fn.getline(vim.v.foldstart)
+  local level = #(text:match("^(#+)%s") or "")
+  local group = level > 0 and level <= 6 and ("@markup.heading.%d.markdown"):format(level) or "Folded"
+  return {
+    { "\u{25b8} ", "PadFoldMark" },
+    { text, group },
+    { ("  %d line%s"):format(lines, lines == 1 and "" or "s"), "PadFoldCount" },
+  }
+end
+vim.api.nvim_set_hl(0, "PadFoldMark", { fg = "#00ffff" })
+vim.api.nvim_set_hl(0, "PadFoldCount", { link = "Comment" })
+
+-- Enter toggles the fold under the cursor; on a line with no fold it is the ordinary Enter
+-- (down to the next line's first non-blank, count honoured).
+vim.keymap.set("n", "<CR>", function()
+  if vim.fn.foldlevel(vim.fn.line(".")) > 0 then
+    vim.cmd("normal! za")
+  else
+    vim.cmd("normal! " .. vim.v.count1 .. "+")
+  end
+end, { desc = "Toggle fold" })
 
 -- PLUGIN ALLOWLIST (cbm-035). The pad does not run init.lua, so no plugin loads unless it is
 -- named here; --noplugin on the command line keeps the rest of the packpath out. Add a
@@ -71,7 +99,7 @@ vim.opt.equalalways = false
 vim.opt.signcolumn = "no"
 vim.opt.splitright = true
 vim.opt.splitbelow = true
-vim.opt.fillchars = { eob = " " }
+vim.opt.fillchars = { eob = " ", fold = " " }
 vim.opt.list = false
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.showtabline = 1

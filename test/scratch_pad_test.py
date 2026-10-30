@@ -103,6 +103,25 @@ def heading_folds():
                               env=env, capture_output=True, text=True, timeout=20).stdout.strip()
 
 
+def fold_toggle():
+    """Enter toggles the fold under the cursor and is the ordinary Enter (down a line) outside any
+    fold; the closed fold line reads as arrow, heading, line count (cbm-019)."""
+    lua = ('lua vim.defer_fn(function() local k = function(s) return vim.api.nvim_replace_termcodes(s, true, false, true) end;'
+           'local f = function(keys) vim.api.nvim_feedkeys(k(keys), "x", false) end;'
+           'local out = {};'
+           'f("gg<CR>"); out[#out + 1] = vim.fn.line(".");'
+           'f("3G<CR>"); out[#out + 1] = vim.fn.foldclosed(3); out[#out + 1] = vim.fn.foldtextresult(3);'
+           'f("<CR>"); out[#out + 1] = vim.fn.foldclosed(3);'
+           'f("4G<CR>"); out[#out + 1] = vim.fn.foldclosed(4);'
+           'io.stdout:write(table.concat(out, "|")); vim.cmd("qa!") end, 400)')
+    with tempfile.TemporaryDirectory() as tmp:
+        pad = os.path.join(tmp, "pad.md")
+        open(pad, "w").write("intro\n\n# one\ntext a\n## sub\ntext b\n# two\ntext c\n")
+        env = {**os.environ, "XDG_STATE_HOME": os.path.join(tmp, "state")}
+        return subprocess.run([NVIM, "--noplugin", "-u", SCRATCH, "--headless", pad, "-c", lua],
+                              env=env, capture_output=True, text=True, timeout=20).stdout.strip()
+
+
 def active_plugins():
     """Names of the vim.pack plugins the pad actually loads (cbm-035)."""
     lua = ('lua local n = {}; for _, p in ipairs(vim.pack.get(nil, {info = false})) do '
@@ -159,6 +178,12 @@ def main():
     # nested heading at line 3. -1 means open; a number is the first line of the closed fold.
     check("markdown headings fold by section, nested ones on their own, all open at start",
           heading_folds(), "-1,-1,-1,-1,-1,-1 1,1,1,1,-1,-1 -1,-1,3,3,-1,-1")
+
+    # Enter: line 1 has no fold, so it is the ordinary Enter and the cursor goes to line 2; Enter on
+    # the heading at line 3 closes its section (foldclosed 3, fold line text below), again opens
+    # it (-1), and on the body line 4 closes the same section (3).
+    check("Enter toggles folds, plain Enter outside them, fold line reads arrow heading count",
+          fold_toggle(), "2|3|\u25b8 # one  4 lines|-1|3")
 
     # Only the allowlist and the colour schemes load; the heavy plugins of the main config do not.
     loaded = active_plugins()
