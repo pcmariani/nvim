@@ -88,6 +88,13 @@ vim.keymap.set({ "n", "x" }, ":", ";", { desc = "Repeat Search" })
 vim.keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
+-- ctrl-hjkl walk the pad's own splits (cbm-033). A plain wincmd, no plugin and no hand-off at
+-- an edge: the pad is a paneld panel, not a window navd or AeroSpace move between. Normal and
+-- visual only, as in neovide-nav.lua; insert keeps ctrl-h as backspace.
+for _, key in ipairs({ "h", "j", "k", "l" }) do
+  vim.keymap.set({ "n", "x" }, "<C-" .. key .. ">", "<C-w>" .. key, { desc = "Go to the " .. key .. " split" })
+end
+
 -- move lines up/down
 vim.keymap.set("n", "<A-j>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move line down" })
 vim.keymap.set("n", "<A-k>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move line up" })

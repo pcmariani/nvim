@@ -72,6 +72,21 @@ def reopened(pad, env):
     return out.strip()
 
 
+def split_walk():
+    """ctrl-hjkl walk the pad's own splits (cbm-033). Headless, real keys via feedkeys."""
+    lua = ('lua local k = function(s) return vim.api.nvim_replace_termcodes(s, true, false, true) end;'
+           'vim.cmd("vsplit"); vim.cmd("split"); vim.cmd("wincmd t"); local seen = {};'
+           'for _, key in ipairs({"<C-l>", "<C-j>", "<C-h>", "<C-k>"}) do '
+           'vim.api.nvim_feedkeys(k(key), "x", false); table.insert(seen, vim.fn.winnr()) end;'
+           'io.stdout:write(table.concat(seen, ",")); vim.cmd("qa!")')
+    with tempfile.TemporaryDirectory() as tmp:
+        pad = os.path.join(tmp, "pad.md")
+        open(pad, "w").write(TEXT)
+        env = {**os.environ, "XDG_STATE_HOME": os.path.join(tmp, "state")}
+        return subprocess.run([NVIM, "--noplugin", "-u", SCRATCH, "--headless", pad, "-c", lua],
+                              env=env, capture_output=True, text=True, timeout=20).stdout.strip()
+
+
 def case(name, keys):
     tmp = tempfile.mkdtemp()
     try:
@@ -105,6 +120,10 @@ def main():
     check("markdown keeps the pad's 2-space indent", again.split()[2:], ["sw=2", "ts=2"])
     again, _, _ = case("insert", b"\x1b2Gwli")
     check("insert mode: position and mode come back after SIGKILL", again.split()[:2], ["2,5", "i"])
+
+    # The pad sets splitright and splitbelow, so after vsplit + split window 1 is the full-height
+    # left column, 2 is top right and 3 bottom right. From 1: l -> 2, j -> 3, h -> 1, k -> 1 (edge).
+    check("ctrl-hjkl walk the pad's splits, and stop at an edge", split_walk(), "2,3,1,1")
 
     print("FAILED" if failures else "all passed")
     return 1 if failures else 0
