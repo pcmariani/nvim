@@ -17,6 +17,17 @@ require("config.colorscheme")
 -- background (2026-10-27, the user). Brighter plain text, nothing else changed.
 vim.api.nvim_set_hl(0, "Normal", { fg = "#f0f0f0", update = true })
 
+-- The cursor is Ghostty's own (cursor-color 00ffff, cursor-text 000000):
+-- nvim paints it through the Cursor group, which the TUI sends to the terminal
+-- as a colour, so the pad matches the shell next to it (2026-10-30).
+vim.api.nvim_set_hl(0, "Cursor", { fg = "#000000", bg = "#00ffff" })
+vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor,"
+  .. "t:block-blinkon500-blinkoff500-TermCursor"
+
+-- Neovim's markdown ftplugin sets shiftwidth and tabstop to 4 on every .md
+-- buffer, which beat the 2 set below (measured 2026-10-30: ft=markdown sw=4).
+vim.g.markdown_recommended_style = 0
+
 -- OPTIONS --
 
 -- Basics
@@ -180,3 +191,44 @@ vim.keymap.set("n", "<leader>tc", function()
   vim.wo.conceallevel = 0
   vim.notify("conceallevel = 0")
 end, { silent = true, desc = "Cycle Conceallevel" })
+
+-- CURSOR MEMORY (2026-10-30). The pad reopens where it was left, in the mode it
+-- was left in; the first run, with nothing saved, opens at the end ready to type
+-- as it always did. Saved to a file of our own, debounced: the panel is torn
+-- down by a hangup or a kill, and neither leaves a '" mark or a shada entry
+-- (measured: after SIGHUP and after SIGKILL the mark was still line 1).
+local cursor_file = vim.fn.stdpath("state") .. "/scratch-cursor"
+local save_timer = assert(vim.uv.new_timer())
+
+local function save_cursor()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  local insert = vim.api.nvim_get_mode().mode:sub(1, 1) == "i"
+  pcall(vim.fn.writefile, { ("%d %d %s"):format(pos[1], pos[2], insert and "i" or "n") }, cursor_file)
+end
+
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "InsertEnter", "InsertLeave" }, {
+  callback = function()
+    save_timer:stop()
+    save_timer:start(150, 0, vim.schedule_wrap(save_cursor))
+  end,
+})
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  once = true,
+  callback = function()
+    local ok, saved = pcall(vim.fn.readfile, cursor_file)   -- throws when there is no file yet
+    local line, col, mode = ((ok and saved[1]) or ""):match("^(%d+) (%d+) ([in])$")
+    if not line then
+      vim.cmd("normal! G$")
+      vim.cmd("startinsert!")
+      return
+    end
+    line = math.min(tonumber(line), vim.api.nvim_buf_line_count(0))
+    local text = vim.api.nvim_buf_get_lines(0, line - 1, line, false)[1] or ""
+    col = math.min(tonumber(col), #text)
+    vim.api.nvim_win_set_cursor(0, { line, col })
+    if mode == "i" then
+      vim.cmd("startinsert")
+    end
+  end,
+})
