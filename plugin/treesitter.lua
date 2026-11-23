@@ -27,6 +27,7 @@ require('nvim-treesitter.config').setup {
 	ignore_install = {},
 	highlight = {
 		enable = true,
-		additional_vim_regex_highlighting = false,
+		-- markdown also gets the vim-pandoc-syntax regex highlighting (fancy lists)
+		additional_vim_regex_highlighting = { "markdown" },
 	},
 }

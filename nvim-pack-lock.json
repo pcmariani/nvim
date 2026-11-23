@@ -125,6 +125,10 @@
       "rev": "a19c102864795508f174f4ae4bb390bf3f8fe9db",
       "src": "https://github.com/kemiller/vim-ir_black"
     },
+    "vim-pandoc-syntax": {
+      "rev": "87929100f2497da82f19180ffa49e75a88e7c369",
+      "src": "https://github.com/vim-pandoc/vim-pandoc-syntax"
+    },
     "vim-tmux-navigator": {
       "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
       "src": "https://github.com/christoomey/vim-tmux-navigator"

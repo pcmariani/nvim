@@ -1,6 +1,9 @@
 -- Must set plugin variables BEFORE vim.pack.add() so they're visible when
 -- Neovim auto-discovers plugin files during the plugin-loading phase.
 vim.g.tmux_navigator_no_mappings = 1
+-- vim-pandoc-syntax: highlight pandoc list markers in markdown (regex syntax,
+-- layered on top of treesitter). Conceal off so markdown text looks unchanged.
+vim.g["pandoc#syntax#conceal#use"] = 0
 
 vim.pack.add({
   "https://github.com/folke/persistence.nvim",
@@ -11,6 +14,7 @@ vim.pack.add({
   "https://github.com/rachartier/tiny-cmdline.nvim",
   -- "https://github.com/tadmccorkle/markdown.nvim",
   "https://github.com/YousefHadder/markdown-plus.nvim",
+  "https://github.com/vim-pandoc/vim-pandoc-syntax",
 }, { confirm = false })
 
 -- persistence {{{
@@ -69,3 +73,14 @@ require("tiny-cmdline").setup({
 
 -- markdown-plus.nvim
 require("markdown-plus").setup({})
+
+-- vim-pandoc-syntax only ships syntax/pandoc.vim (the core vim-pandoc plugin is
+-- what normally attaches it to markdown), so point markdown buffers at it here.
+-- Treesitter still highlights; the regex layer adds the pandoc list markers.
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("PandocListSyntax", { clear = true }),
+  pattern = "markdown",
+  callback = function(ev)
+    vim.bo[ev.buf].syntax = "pandoc"
+  end,
+})
