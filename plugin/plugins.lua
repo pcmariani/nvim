@@ -84,3 +84,13 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo[ev.buf].syntax = "pandoc"
   end,
 })
+
+-- The pandoc list-marker group (letters, digits) picks its own colour from many
+-- colorschemes, often close to plain text. Link it to the Treesitter list-marker
+-- colour so letter markers match the numbers and bullets. Re-applied on each
+-- colorscheme change.
+local function pandoc_list_marker_hl()
+  vim.api.nvim_set_hl(0, "pandocListItemBulletId", { link = "@markup.list" })
+end
+vim.api.nvim_create_autocmd("ColorScheme", { callback = pandoc_list_marker_hl })
+pandoc_list_marker_hl()
